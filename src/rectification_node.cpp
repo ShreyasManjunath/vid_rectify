@@ -64,7 +64,7 @@ void stereoImageCallback(const sensor_msgs::ImageConstPtr &img_left, const senso
 
 }
 
-void readIntrinsicFile(std::string file_name){
+void readIntrinsicFile(std::string& file_name){
     cv::FileStorage file(file_name.c_str(), cv::FileStorage::READ);
 
     file["leftCameraIntrinsicMatrix"] >> left_camera_params.camMtx;
@@ -102,11 +102,15 @@ void initStereo(){
 
 int main(int argc, char** argv){
 
-    ros::init(argc, argv, "Stereo_Rectification_Node");
+    ros::init(argc, argv, "stereo_rectification_node");
     ros::NodeHandle nh;
 
-    std::string file = "/home/manshr/catkin_ws/src/vid_rectify/yaml/m210_stereo_param.yaml";
-    readIntrinsicFile(file);
+    std::string paramFile, left_stereo_topic, right_stereo_topic; 
+    nh.getParam("/stereo_rectification_node/stereo_params", paramFile);
+    nh.getParam("/stereo_rectification_node/left_stereo_topic", left_stereo_topic);
+    nh.getParam("/stereo_rectification_node/right_stereo_topic", right_stereo_topic);
+    
+    readIntrinsicFile(paramFile);
     initStereo();
     
 
@@ -117,14 +121,10 @@ int main(int argc, char** argv){
     message_filters::Subscriber<sensor_msgs::Image> img_right_sub;
     message_filters::TimeSynchronizer<sensor_msgs::Image, sensor_msgs::Image>* topic_synchronizer;
 
-    img_left_sub.subscribe(nh, "/dji_osdk_ros/stereo_vga_front_left_images", 1);
-    img_right_sub.subscribe(nh, "/dji_osdk_ros/stereo_vga_front_right_images", 1);
+    img_left_sub.subscribe(nh, left_stereo_topic, 1);
+    img_right_sub.subscribe(nh, right_stereo_topic, 1);
     topic_synchronizer = new message_filters::TimeSynchronizer<sensor_msgs::Image, sensor_msgs::Image>(img_left_sub, img_right_sub, 10);
 
-    img_left_sub. subscribe(nh, "/dji_osdk_ros/stereo_vga_front_left_images", 1);
-    img_right_sub.subscribe(nh, "/dji_osdk_ros/stereo_vga_front_right_images", 1);
-  
-    topic_synchronizer = new message_filters::TimeSynchronizer<sensor_msgs::Image, sensor_msgs::Image>(img_left_sub, img_right_sub, 10);
 
     topic_synchronizer->registerCallback(boost::bind(&stereoImageCallback, _1, _2));
     ros::spin();
