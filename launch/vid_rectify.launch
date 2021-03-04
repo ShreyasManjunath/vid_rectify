@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+	
+	<node pkg="vid_rectify" type="vid_rectify" name="Rectification_Node" output="screen">
+	
+
+	</node>
+
+
+</launch>
