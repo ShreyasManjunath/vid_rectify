@@ -11,6 +11,8 @@
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
 
+void visualizeRectImgHelper(cv::Mat& left, cv::Mat& right);
+
 ros::Publisher rect_img_left_publisher;
 ros::Publisher rect_img_right_publisher;
 
@@ -62,6 +64,8 @@ void stereoImageCallback(const sensor_msgs::ImageConstPtr &img_left, const senso
     rect_img_left_publisher.publish(rect_img_left.toImageMsg());
     rect_img_right_publisher.publish(rect_img_right.toImageMsg());
 
+    visualizeRectImgHelper(cv_rectified_left_img, cv_rectified_right_img);
+
 }
 
 void readIntrinsicFile(std::string& file_name){
@@ -92,6 +96,21 @@ void initStereo(){
 
     std::cout << "initUndistortRectifyMap completed "  << std::endl;
 
+}
+
+void visualizeRectImgHelper(cv::Mat& left, cv::Mat& right){
+    cv::Mat img_to_show;
+    cv::hconcat(left, right, img_to_show);
+    cv::resize(img_to_show, img_to_show, cv::Size(1280,480), (0, 0), (0, 0), cv::INTER_LINEAR);
+
+    // draw epipolar lines to visualize rectification
+  for(int j = 0; j < img_to_show.rows; j += 24 ){
+    line(img_to_show, cv::Point(0, j),
+         cv::Point(img_to_show.cols, j),
+         cv::Scalar(255, 0, 0, 255), 1, 8);
+  }
+  cv::imshow("Rectified Stereo Imgs with epipolar lines", img_to_show);
+  cv::waitKey(1);
 }
 
 /* 
