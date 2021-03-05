@@ -3,11 +3,13 @@
 	<arg name="stereo_params" default="$(find vid_rectify)/yaml/m210_stereo_param.yaml"/>
 	<arg name="left_stereo_topic" default="/dji_osdk_ros/stereo_vga_front_left_images"/>
 	<arg name="right_stereo_topic" default="/dji_osdk_ros/stereo_vga_front_right_images"/>
+	<arg name="display" default="false"/>
 
 	<node pkg="vid_rectify" type="vid_rectify" name="stereo_rectification_node" output="screen">
 		<param name="stereo_params" value="$(arg stereo_params)"/>
 		<param name="left_stereo_topic" value="$(arg left_stereo_topic)"/>
 		<param name="right_stereo_topic" value="$(arg right_stereo_topic)"/>
+		<param name="display" value="$(arg display)"/>
 		
 	</node>
 

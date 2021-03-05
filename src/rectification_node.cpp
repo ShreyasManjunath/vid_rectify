@@ -1,7 +1,10 @@
 /**
- * Implementation file for rectification node
+ * \author Manjunath, Shreyas
+ * \date 05.05.2021
+ * \brief Implementation file for rectification node
  * */
 
+// header files
 #include <ros/ros.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
@@ -10,6 +13,10 @@
 #include <opencv2/opencv.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
+
+/**
+ * 
+ * */
 
 void visualizeRectImgHelper(cv::Mat& left, cv::Mat& right);
 
@@ -27,6 +34,7 @@ struct StereoCameraParams{
 
 StereoCameraParams left_camera_params;
 StereoCameraParams right_camera_params;
+bool DISPLAY = false;
 
 
 void stereoImageCallback(const sensor_msgs::ImageConstPtr &img_left, const sensor_msgs::ImageConstPtr &img_right){
@@ -64,7 +72,10 @@ void stereoImageCallback(const sensor_msgs::ImageConstPtr &img_left, const senso
     rect_img_left_publisher.publish(rect_img_left.toImageMsg());
     rect_img_right_publisher.publish(rect_img_right.toImageMsg());
 
-    visualizeRectImgHelper(cv_rectified_left_img, cv_rectified_right_img);
+    if(DISPLAY){
+        visualizeRectImgHelper(cv_rectified_left_img, cv_rectified_right_img);
+    }
+    
 
 }
 
@@ -128,6 +139,7 @@ int main(int argc, char** argv){
     nh.getParam("/stereo_rectification_node/stereo_params", paramFile);
     nh.getParam("/stereo_rectification_node/left_stereo_topic", left_stereo_topic);
     nh.getParam("/stereo_rectification_node/right_stereo_topic", right_stereo_topic);
+    nh.getParam("/stereo_rectification_node/display", DISPLAY);
     
     readIntrinsicFile(paramFile);
     initStereo();
