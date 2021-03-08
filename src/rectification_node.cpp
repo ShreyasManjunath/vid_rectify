@@ -210,7 +210,10 @@ int main(int argc, char** argv){
     // Subscribing to both the topics at the same time for synchronization
     topic_synchronizer->registerCallback(boost::bind(&stereoImageCallback, _1, _2));
     ros::spin();
-    cv::destroyAllWindows();
+	if(DISPLAY){
+		cv::destroyAllWindows();
+	}
+    
 
     return 0;
 
