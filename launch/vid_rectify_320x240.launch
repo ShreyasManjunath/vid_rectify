@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
 	<arg name="stereo_params" default="$(find vid_rectify)/yaml/m210_stereo_param_320x240.yaml"/>
-	<arg name="left_stereo_topic" default="/dji_osdk_ros/stereo_vga_front_left_images"/>
-	<arg name="right_stereo_topic" default="/dji_osdk_ros/stereo_vga_front_right_images"/>
+	<arg name="left_stereo_topic" default="/dji_osdk_ros/stereo_240p_front_left_images"/>
+	<arg name="right_stereo_topic" default="/dji_osdk_ros/stereo_240p_front_right_images"/>
 	<arg name="display" default="false"/>
 
 	<node pkg="vid_rectify" type="vid_rectify" name="stereo_rectification_node" output="screen">
