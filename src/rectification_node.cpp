@@ -57,6 +57,12 @@ StereoCameraParams left_camera_params;
 StereoCameraParams right_camera_params;
 
 /**
+* Resolution of the image stream
+**/
+int WIDTH = 0;
+int HEIGHT = 0;
+
+/**
  * Display flag to opt in or opt out of Open Window to be displayed.
  * Can be set to "true" using args to launch file. Default = false. 
  * */
@@ -98,12 +104,12 @@ void stereoImageCallback(const sensor_msgs::ImageConstPtr &img_left, const senso
 
     // Left camera rectified image data structure which contains header, type of encoding and Image data.
     rect_img_left.header = img_left->header;
-    rect_img_left.encoding = sensor_msgs::image_encodings::TYPE_8UC1;
+    rect_img_left.encoding = img_left->encoding;
     rect_img_left.image = cv_rectified_left_img;
 
     // Right camera rectified image data structure which contains header, type of encoding and Image data.
     rect_img_right.header = img_right->header;
-    rect_img_right.encoding = sensor_msgs::image_encodings::TYPE_8UC1;
+    rect_img_right.encoding = img_right->encoding;
     rect_img_right.image = cv_rectified_right_img;
 
     // Publishing the rectified images as ros_messages
@@ -147,10 +153,10 @@ void readIntrinsicFile(std::string& file_name){
 
 void initRectifyMaps(){
     cv::initUndistortRectifyMap(left_camera_params.camMtx, left_camera_params.distCoeff, 
-                                left_camera_params.rectMtx, left_camera_params.projectionMtx, cv::Size(640, 480),
+                                left_camera_params.rectMtx, left_camera_params.projectionMtx, cv::Size(WIDTH, HEIGHT),
                                 CV_32F, rectified_mapping[0][0], rectified_mapping[0][1]);
     cv::initUndistortRectifyMap(right_camera_params.camMtx, right_camera_params.distCoeff, 
-                                right_camera_params.rectMtx, right_camera_params.projectionMtx, cv::Size(640, 480),
+                                right_camera_params.rectMtx, right_camera_params.projectionMtx, cv::Size(WIDTH, HEIGHT),
                                 CV_32F, rectified_mapping[1][0], rectified_mapping[1][1]);
 
     ROS_INFO("initUndistortRectifyMap completed ");
@@ -161,7 +167,7 @@ void visualizeRectImgHelper(cv::Mat& left, cv::Mat& right){
     cv::Mat img_to_show;
     // concatinating left and right rectified stereo images on a single canvas
     cv::hconcat(left, right, img_to_show);
-    cv::resize(img_to_show, img_to_show, cv::Size(1280,480), (0, 0), (0, 0), cv::INTER_LINEAR);
+    cv::resize(img_to_show, img_to_show, cv::Size(2*WIDTH,HEIGHT), (0, 0), (0, 0), cv::INTER_LINEAR);
 
     // draw epipolar lines to visualize rectification
   for(int j = 0; j < img_to_show.rows; j += 24 ){
@@ -189,6 +195,8 @@ int main(int argc, char** argv){
     nh.getParam("/stereo_rectification_node/left_stereo_topic", left_stereo_topic);
     nh.getParam("/stereo_rectification_node/right_stereo_topic", right_stereo_topic);
     nh.getParam("/stereo_rectification_node/display", DISPLAY);
+	nh.getParam("/stereo_rectification_node/width", WIDTH);
+	nh.getParam("/stereo_rectification_node/height", HEIGHT);
     
     // Reads the camera parameter file
     readIntrinsicFile(paramFile);
