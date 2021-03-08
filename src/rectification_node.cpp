@@ -196,8 +196,8 @@ int main(int argc, char** argv){
     // Initializes stereo rectification
     initRectifyMaps();
     
-    rect_img_left_publisher = nh.advertise<sensor_msgs::Image>("/dji_osdk_ros_custom/rectified_vga_front_left_image", 10);
-    rect_img_right_publisher = nh.advertise<sensor_msgs::Image>("/dji_osdk_ros_custom/rectified_vga_front_right_image", 10);
+    rect_img_left_publisher = nh.advertise<sensor_msgs::Image>("/vid_rectify/rectified_vga_front_left_images", 10);
+    rect_img_right_publisher = nh.advertise<sensor_msgs::Image>("/vid_rectify/rectified_vga_front_right_images", 10);
 
     message_filters::Subscriber<sensor_msgs::Image> img_left_sub;
     message_filters::Subscriber<sensor_msgs::Image> img_right_sub;
