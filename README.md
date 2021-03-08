@@ -4,6 +4,7 @@ Ros Node for rectifying Stereo images.
 
 ## Pre-requisites
 1. Robot Operating System (ROS)
+2. OpenCV
 
 ## How to use?
 1. Clone the repo inside the ros workspace (catkin workspace)
