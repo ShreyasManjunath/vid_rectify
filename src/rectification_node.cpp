@@ -145,7 +145,7 @@ void readIntrinsicFile(std::string& file_name){
  * \brief initializes the stereo rectification using initUndistortRectifyMap method and generates rectified mapping values for rectification.
  * */
 
-void initStereo(){
+void initRectifyMaps(){
     cv::initUndistortRectifyMap(left_camera_params.camMtx, left_camera_params.distCoeff, 
                                 left_camera_params.rectMtx, left_camera_params.projectionMtx, cv::Size(640, 480),
                                 CV_32F, rectified_mapping[0][0], rectified_mapping[0][1]);
@@ -194,7 +194,7 @@ int main(int argc, char** argv){
     readIntrinsicFile(paramFile);
 
     // Initializes stereo rectification
-    initStereo();
+    initRectifyMaps();
     
     rect_img_left_publisher = nh.advertise<sensor_msgs::Image>("/dji_osdk_ros_custom/rectified_vga_front_left_image", 10);
     rect_img_right_publisher = nh.advertise<sensor_msgs::Image>("/dji_osdk_ros_custom/rectified_vga_front_right_image", 10);
